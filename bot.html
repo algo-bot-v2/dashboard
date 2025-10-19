@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ALGO BOT V2.0 — Markets & Chart</title>
+
+  <style>
+    :root{
+      --bg:#071427;
+      --card: rgba(255,255,255,0.03);
+      --accent:#6ee7b7;
+      --accent2:#7c3aed;
+      --muted:#9aa4b2;
+      --glass: rgba(255,255,255,0.02);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg,#061021 0%, #071427 100%);
+      color:#e6eef6;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      padding:28px;
+    }
+
+    .layout{
+      width:100%;
+      max-width:1200px;
+      display:grid;
+      grid-template-columns: 320px 1fr;
+      gap:20px;
+    }
+
+    .panel{
+      background:var(--card);
+      border-radius:12px;
+      padding:18px;
+      box-shadow: 0 10px 30px rgba(2,6,23,0.6);
+      border: 1px solid rgba(255,255,255,0.02);
+    }
+
+    .left .brand{
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+    .logo{
+      width:64px;height:64px;border-radius:12px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      display:flex;align-items:center;justify-content:center;color:#042025;font-weight:800;font-size:18px;
+    }
+    h1{font-size:18px;margin:0}
+    p.sub{color:var(--muted);margin-top:6px;margin-bottom:12px;font-size:13px}
+
+    .markets-list{margin-top:12px;display:flex;flex-direction:column;gap:8px;}
+    .market-item{
+      display:flex;align-items:center;justify-content:space-between;padding:8px;border-radius:8px;background:var(--glass);
+      cursor:pointer;border:1px solid rgba(255,255,255,0.01);
+    }
+    .market-item:hover{transform:translateY(-2px);transition:all .12s ease}
+
+    .market-item .left{display:flex;flex-direction:column}
+    .market-symbol{font-weight:700}
+    .market-sub{font-size:12px;color:var(--muted)}
+
+    .tf-row{display:flex;gap:8px;margin-top:12px}
+    .btn{
+      padding:8px 10px;border-radius:8px;border:none;background:transparent;color:var(--muted);cursor:pointer;font-weight:700;
+      border:1px solid rgba(255,255,255,0.03)
+    }
+    .btn.active{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#042025;border:none}
+
+    /* chart column */
+    .chart-area{min-height:600px;display:flex;flex-direction:column}
+    #chart-container{flex:1;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,0.03)}
+    .topbar{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+    .price{font-weight:800;font-size:20px}
+    .meta{color:var(--muted);font-size:13px}
+
+    /* responsive */
+    @media (max-width:960px){
+      .layout{grid-template-columns: 1fr; padding-bottom:24px}
+      .chart-area{min-height:420px}
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <!-- LEFT: markets + timeframes -->
+    <aside class="panel left">
+      <div class="brand">
+        <div class="logo">ALV2</div>
+        <div>
+          <h1>ALGO BOT V2.0</h1>
+          <p class="sub">Live markets • Select timeframe • TradingView powered</p>
+        </div>
+      </div>
+
+      <div style="margin-top:14px">
+        <div class="meta">Timeframes</div>
+        <div class="tf-row" role="tablist" aria-label="Timeframes">
+          <button class="btn tf-btn" data-interval="1">1m</button>
+          <button class="btn tf-btn" data-interval="5">5m</button>
+          <button class="btn tf-btn" data-interval="15">15m</button>
+          <button class="btn tf-btn" data-interval="60">60m</button>
+          <button class="btn tf-btn active" data-interval="D">1D</button>
+        </div>
+      </div>
+
+      <div style="margin-top:14px">
+        <div class="meta">Markets (common OTC / FX / Crypto / Commodities)</div>
+        <div class="markets-list" id="marketsList" role="list">
+          <!-- items injected by JS -->
+        </div>
+      </div>
+
+      <div style="margin-top:14px;color:var(--muted);font-size:13px">
+        Notes:
+        <ul style="margin:8px 0 0 18px;color:var(--muted)">
+          <li>Chart widget is provided by TradingView (real-time chart widget).</li>
+          <li>If you want raw JSON ticks or many symbols, use Twelve Data / Finnhub APIs (they provide REST & WebSocket feeds).</li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- RIGHT: Chart -->
+    <section class="panel chart-area">
+      <div class="topbar">
+        <div>
+          <div class="price" id="livePrice">—</div>
+          <div class="meta" id="liveMeta">Symbol • Interval • Last update</div>
+        </div>
+        <div style="margin-left:auto;color:var(--muted);font-size:13px">Powered by TradingView</div>
+      </div>
+
+      <div id="chart-container"></div>
+    </section>
+  </div>
+
+  <!-- TradingView widget script (official) -->
+  <script src="https://s3.tradingview.com/tv.js" defer></script>
+
+  <script>
+    // --- SYMBOL LIST (common OTC / Forex / Crypto / Commodities)
+    // Each item: { id: 'label for TradingView', title: 'display name' }
+    // NOTE: TradingView symbol prefixes: FX: for forex, BINANCE: for Binance spot, OANDA: for some FX/commodities, TV: for generic.
+    const SYMBOLS = [
+      { id: 'FX:EURUSD', title: 'EUR/USD' },
+      { id: 'FX:GBPUSD', title: 'GBP/USD' },
+      { id: 'FX:USDJPY', title: 'USD/JPY' },
+      { id: 'FX:AUDUSD', title: 'AUD/USD' },
+      { id: 'FX:USDCAD', title: 'USD/CAD' },
+      { id: 'FX:USDCHF', title: 'USD/CHF' },
+      { id: 'OANDA:XAUUSD', title: 'Gold (XAU/USD)' },
+      { id: 'OANDA:XAGUSD', title: 'Silver (XAG/USD)' },
+      { id: 'NYMEX:CL1!', title: 'Crude Oil (WTI)' },
+      { id: 'BINANCE:BTCUSDT', title: 'Bitcoin (BTC/USDT)' },
+      { id: 'BINANCE:ETHUSDT', title: 'Ethereum (ETH/USDT)' },
+      { id: 'TV:COPPER', title: 'Copper (generic)' }
+    ];
+
+    // Populate left-side market list
+    const marketsList = document.getElementById('marketsList');
+    SYMBOLS.forEach((s, i) => {
+      const el = document.createElement('button');
+      el.className = 'market-item';
+      el.type = 'button';
+      el.dataset.symbol = s.id;
+      el.innerHTML = `<div class="left"><div class="market-symbol">${s.title}</div><div class="market-sub">${s.id}</div></div><div class="right meta">Open</div>`;
+      el.addEventListener('click', ()=> selectSymbol(s));
+      marketsList.appendChild(el);
+    });
+
+    // TradingView widget handle
+    let tvWidget = null;
+    let currentSymbol = SYMBOLS[0];
+    let currentInterval = 'D';
+
+    // helper to create widget
+    function createWidget(symbol = 'FX:EURUSD', interval = 'D'){
+      const container = document.getElementById('chart-container');
+      container.innerHTML = ''; // clear
+      // If TradingView global is not ready, wait and retry
+      if(!window.TradingView){
+        container.innerHTML = '<div style="padding:30px;color:var(--muted)">Loading chart engine...</div>';
+        setTimeout(()=> createWidget(symbol, interval), 250);
+        return;
+      }
+      tvWidget = new TradingView.widget({
+        autosize: true,
+        symbol: symbol,
+        interval: interval,
+        timezone: "Etc/UTC",
+        theme: "Dark",
+        style: "1",
+        toolbar_bg: "#f1f3f6",
+        hidevolume: false,
+        allow_symbol_change: true,
+        details: true,
+        studies: ["RSI@tv-basicstudies"],
+        container_id: "chart-container",
+        // small responsive tweaks
+        withdateranges: true,
+        hide_top_toolbar: false,
+        enable_publishing: false,
+        save_image: false,
+        locale: "en"
+      });
+
+      // Update live price display periodically via TradingView's onReady
+      tvWidget.onChartReady && tvWidget.onChartReady(()=>{
+        // try to get last price / updates from widget's API (some widget builds provide datafeed events)
+        // Fallback: poll last visible candle using widget's API (if available)
+        try {
+          const chart = tvWidget.activeChart();
+          const updatePrice = async ()=>{
+            try{
+              const symbolInfo = chart && chart.symbol();
+              // The widget API's availability may vary — we'll update basic label
+              document.getElementById('livePrice').textContent = 'Loading…';
+              document.getElementById('liveMeta').textContent = `${symbolInfo ? symbolInfo.name || symbol : symbol} • ${interval} • live`;
+            }catch(e){
+              // ignore
+            }
+          };
+          updatePrice();
+          // attempt regular label refresh
+          setInterval(updatePrice, 3000);
+        } catch(e){
+          // ignore
+        }
+      });
+    }
+
+    // select symbol function
+    function selectSymbol(s){
+      currentSymbol = s;
+      // mark active in list
+      document.querySelectorAll('.market-item').forEach(btn=>{
+        btn.style.boxShadow = btn.dataset.symbol === s.id ? '0 6px 18px rgba(124,58,237,0.12)' : 'none';
+      });
+      // recreate widget with new symbol & currentInterval
+      createWidget(s.id, currentInterval);
+      // update header price label (will be updated by widget on ready)
+      document.getElementById('liveMeta').textContent = `${s.title} • ${currentInterval} • connecting…`;
+      document.getElementById('livePrice').textContent = '—';
+    }
+
+    // timeframe buttons
+    document.querySelectorAll('.tf-btn').forEach(b=>{
+      b.addEventListener('click', ()=>{
+        document.querySelectorAll('.tf-btn').forEach(x=>x.classList.remove('active'));
+        b.classList.add('active');
+        currentInterval = b.dataset.interval;
+        // recreate widget with new timeframe (TradingView widget doesn't support interval switching on the fly reliably across builds)
+        createWidget(currentSymbol.id, currentInterval);
+        document.getElementById('liveMeta').textContent = `${currentSymbol.title} • ${currentInterval} • updating…`;
+      });
+    });
+
+    // init: select first symbol and create widget (after tv.js loads)
+    window.addEventListener('load', ()=> {
+      selectSymbol(SYMBOLS[0]);
+    });
+
+    // ---- OPTIONAL: If you want raw real-time prices (JSON) instead of only chart widget:
+    // You can plug-in a REST or WebSocket feed from providers like Twelve Data or Finnhub.
+    // Example providers:
+    //  - Twelve Data (REST + WebSocket): https://twelvedata.com/ (supports forex, crypto, stocks). :contentReference[oaicite:2]{index=2}
+    //  - Finnhub (REST + WebSocket): https://finnhub.io/ (stocks, forex, crypto). :contentReference[oaicite:3]{index=3}
+    //
+    // Those services typically require an API key (free tiers available) and then you can:
+    //  - open a WebSocket to subscribe to multiple symbols and update the price badge in real-time
+    //  - or poll a /price endpoint periodically for each symbol
+    //
+    // If you want, I can add example code that:
+    //  1) asks you for your Twelve Data or Finnhub API key, and
+    //  2) opens a WebSocket (or polls REST) to update the "livePrice" and small feed for many OTC symbols.
+    //
+    // See provider docs for setup and limits. :contentReference[oaicite:4]{index=4}
+
+  </script>
+</body>
+</html>
