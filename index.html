@@ -1,288 +1,507 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>ALGO BOT V2.0 — Markets & Chart</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DELUX STORE - FINAL & COMPLETE</title>
 
-  <style>
-    :root{
-      --bg:#071427;
-      --card: rgba(255,255,255,0.03);
-      --accent:#6ee7b7;
-      --accent2:#7c3aed;
-      --muted:#9aa4b2;
-      --glass: rgba(255,255,255,0.02);
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      min-height:100vh;
-      font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      background: linear-gradient(180deg,#061021 0%, #071427 100%);
-      color:#e6eef6;
-      display:flex;
-      align-items:flex-start;
-      justify-content:center;
-      padding:28px;
-    }
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap');
 
-    .layout{
-      width:100%;
-      max-width:1200px;
-      display:grid;
-      grid-template-columns: 320px 1fr;
-      gap:20px;
-    }
+        /* --- THEME ADJUSTMENT: Mid-Light Color Changing Background --- */
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(-45deg, #74a8ac, #80b490, #ffd3b5, #c2a7c4);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #1d3557; 
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* --- General Container Styling --- */
+        .interface-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(5px);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            padding: 40px;
+            width: 90%;
+            max-width: 1200px;
+            text-align: center;
+            position: relative;
+        }
+        .hidden { display: none !important; }
+        #store-name {
+            font-size: 2.5em;
+            font-weight: 900;
+            color: #1d3557;
+            margin-bottom: 25px;
+            border-bottom: 3px solid #e63946; 
+            padding-bottom: 10px;
+            letter-spacing: 5px; 
+        }
 
-    .panel{
-      background:var(--card);
-      border-radius:12px;
-      padding:18px;
-      box-shadow: 0 10px 30px rgba(2,6,23,0.6);
-      border: 1px solid rgba(255,255,255,0.02);
-    }
+        /* --- Login Box Width Fix (Retained for clean look) --- */
+        #login-interface { max-width: 400px; padding: 30px; }
+        #login-interface input { width: 100%; padding: 12px; margin: 8px 0; background: #fff; border: 1px solid #a8dadc; }
+        input[type="email"], input[type="password"], 
+        #shipping-details-page input[type="text"], #shipping-details-page input[type="tel"] {
+            width: 90%; padding: 15px; margin: 10px 0; border: 1px solid #a8dadc; border-radius: 10px; background: #f1faee; font-size: 1em; font-weight: 500; color: #333; outline: none; box-sizing: border-box;
+        }
 
-    .left .brand{
-      display:flex;
-      gap:12px;
-      align-items:center;
-    }
-    .logo{
-      width:64px;height:64px;border-radius:12px;
-      background:linear-gradient(135deg,var(--accent),var(--accent2));
-      display:flex;align-items:center;justify-content:center;color:#042025;font-weight:800;font-size:18px;
-    }
-    h1{font-size:18px;margin:0}
-    p.sub{color:var(--muted);margin-top:6px;margin-bottom:12px;font-size:13px}
+        /* --- Buttons --- */
+        button { background-color: #457b9d; color: #fff; font-weight: 900; padding: 15px 30px; margin-top: 20px; border: none; border-radius: 10px; cursor: pointer; width: 100%; font-size: 1.1em; transition: background-color 0.3s; }
+        button:hover { background-color: #1d3557; }
+        .checkout-btn { background-color: #e63946; color: white; margin-top: 10px; } 
+        .checkout-btn:hover { background-color: #c71020; }
+        .back-btn { background-color: #9d9d9d; }
 
-    .markets-list{margin-top:12px;display:flex;flex-direction:column;gap:8px;}
-    .market-item{
-      display:flex;align-items:center;justify-content:space-between;padding:8px;border-radius:8px;background:var(--glass);
-      cursor:pointer;border:1px solid rgba(255,255,255,0.01);
-    }
-    .market-item:hover{transform:translateY(-2px);transition:all .12s ease}
+        /* --- Dashboard & Spacing --- */
+        .product-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 30px; 
+            margin-top: 30px; 
+        }
+        .product-card {
+            background: #fff;
+            color: #333;
+            padding: 20px; 
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+            text-align: left;
+            position: relative;
+        }
+        .img-container { 
+            width: 100%; height: 150px; border-radius: 8px; margin-bottom: 15px; 
+            background-color: #f1faee; border: 1px solid #a8dadc;
+            display: flex; justify-content: center; align-items: center; overflow: hidden;
+        }
+        .product-image { 
+            max-width: 100%; max-height: 100%; width: auto; height: auto;
+            object-fit: contain; display: block; 
+        }
+        
+        .product-title { font-size: 1.2em; font-weight: 900; color: #1d3557; margin-bottom: 5px; }
+        .current-price { color: #e63946; font-size: 1.5em; font-weight: 900; }
+        .original-price { text-decoration: line-through; color: #9d9d9d; margin-left: 10px; font-weight: 500; } /* Styling for strike-through */
 
-    .market-item .left{display:flex;flex-direction:column}
-    .market-symbol{font-weight:700}
-    .market-sub{font-size:12px;color:var(--muted)}
-
-    .tf-row{display:flex;gap:8px;margin-top:12px}
-    .btn{
-      padding:8px 10px;border-radius:8px;border:none;background:transparent;color:var(--muted);cursor:pointer;font-weight:700;
-      border:1px solid rgba(255,255,255,0.03)
-    }
-    .btn.active{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#042025;border:none}
-
-    /* chart column */
-    .chart-area{min-height:600px;display:flex;flex-direction:column}
-    #chart-container{flex:1;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,0.03)}
-    .topbar{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-    .price{font-weight:800;font-size:20px}
-    .meta{color:var(--muted);font-size:13px}
-
-    /* responsive */
-    @media (max-width:960px){
-      .layout{grid-template-columns: 1fr; padding-bottom:24px}
-      .chart-area{min-height:420px}
-    }
-  </style>
+        /* --- Payment Logo Fix (Retained) --- */
+        .payment-option { background: #fff; color: #333; border: 1px solid #a8dadc; padding: 10px 15px; margin: 10px 0; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; }
+        .payment-logo { 
+            max-width: 40px; max-height: 25px; height: auto; width: auto;
+            margin-right: 15px; object-fit: contain; padding: 0; border-radius: 4px; 
+        }
+    </style>
 </head>
 <body>
-  <div class="layout">
-    <!-- LEFT: markets + timeframes -->
-    <aside class="panel left">
-      <div class="brand">
-        <div class="logo">ALV2</div>
-        <div>
-          <h1>ALGO BOT V2.0</h1>
-          <p class="sub">Live markets • Select timeframe • TradingView powered</p>
+
+    <div id="login-interface" class="interface-container">
+        <h2 style="color: #e63946; font-size: 1.8em; margin-bottom: 25px;">DELUX STORE LOGIN</h2>
+        <form id="login-form">
+            <input type="email" id="email" placeholder="Enter your Email Address" required>
+            <input type="password" id="password" placeholder="Enter your Password" required>
+            <button type="submit">LOG IN</button>
+            <p id="login-status" style="font-weight: 700; margin-top: 15px;"></p>
+        </form>
+    </div>
+    
+    <div id="product-listing" class="interface-container hidden">
+        <div class="nav-bar">
+            <span class="nav-link" onclick="showInterface('product-listing')">🏠 Home</span>
+            <span class="nav-link" onclick="showInterface('product-listing')">📦 Products</span>
+            <span class="nav-link" onclick="alert('This is the About Us page.')">ℹ️ About Us</span>
+            <span class="nav-link" id="nav-cart-link" onclick="showInterface('cart-page')">🛒 Cart (0)</span>
         </div>
-      </div>
+        
+        <div id="store-name">D E L U X S T O R E</div>
+        <div class="dashboard-header" style="color:#1d3557; font-weight:900; margin-bottom:15px;">🔥 ALL PRODUCTS</div>
+        
+        <p id="cart-status" style="font-weight:700;">🛒 Cart: 0 Items</p>
+        
+        <div class="product-grid">
 
-      <div style="margin-top:14px">
-        <div class="meta">Timeframes</div>
-        <div class="tf-row" role="tablist" aria-label="Timeframes">
-          <button class="btn tf-btn" data-interval="1">1m</button>
-          <button class="btn tf-btn" data-interval="5">5m</button>
-          <button class="btn tf-btn" data-interval="15">15m</button>
-          <button class="btn tf-btn" data-interval="60">60m</button>
-          <button class="btn tf-btn active" data-interval="D">1D</button>
+            <div class="product-card">
+                <div class="sale-tag" style="position: absolute; top: 10px; right: 10px; background: #e63946; color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.8em; font-weight: 700;">SAVE 60%</div>
+                <div class="img-container">
+                    <img class="product-image" src="https://ae01.alicdn.com/kf/S2ce6e21c1cf647f0bb57c06a9acf9a0fc/2023-New-Quadcopter-E88-Pro-WIFI-FPV-Drone-With-Wide-Angle-HD-4K-1080P-Camera-Height.png" alt="4K Pro Drone">
+                </div>
+                <div class="product-title">4K Pro Drone</div>
+                <p class="product-description" style="color: #457b9d; font-size: 0.9em; font-weight: 500;">Compact, ultra-stable camera drone with 30-min battery life.</p>
+                <div class="price-group" style="margin-top:10px; margin-bottom:10px;">
+                    <span class="current-price">₹9,999</span>
+                    <span class="original-price">₹25,000</span>
+                </div>
+                <button class="product-buy-btn" data-name="4K Pro Drone" data-price="9999" onclick="addToCart(event)" style="background-color: #457b9d; color:white; margin-top:0; padding:10px;">ADD TO CART</button>
+            </div>
+
+            <div class="product-card">
+                <div class="sale-tag" style="position: absolute; top: 10px; right: 10px; background: #457b9d; color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.8em; font-weight: 700;">50% OFF</div>
+                <div class="img-container">
+                    <img class="product-image" src="https://udhaar-uploads-aws.s3-ap-southeast-1.amazonaws.com/c059bbd3-7607-4957-aacf-ff0d787ffca2.webp" alt="Smart Watch X10">
+                </div>
+                <div class="product-title">Smart Watch X10</div>
+                <p class="product-description" style="color: #457b9d; font-size: 0.9em; font-weight: 500;">Track your fitness, heart rate, and notifications seamlessly.</p>
+                <div class="price-group" style="margin-top:10px; margin-bottom:10px;">
+                    <span class="current-price">₹4,999</span>
+                    <span class="original-price">₹9,999</span>
+                </div>
+                <button class="product-buy-btn" data-name="Smart Watch X10" data-price="4999" onclick="addToCart(event)" style="background-color: #457b9d; color:white; margin-top:0; padding:10px;">ADD TO CART</button>
+            </div>
+            
+            <div class="product-card">
+                <div class="sale-tag" style="position: absolute; top: 10px; right: 10px; background: #1d3557; color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.8em; font-weight: 700;">NEW!</div>
+                <div class="img-container">
+                    <img class="product-image" src="https://www.pakmobizone.pk/wp-content/uploads/2025/09/Apple-iPhone-17-Pro-Cosmic-Orange-1.png" alt="iPhone 17 Cosmic">
+                </div>
+                <div class="product-title">iPhone 17 Cosmic</div>
+                <p class="product-description" style="color: #457b9d; font-size: 0.9em; font-weight: 500;">Next-gen chipset, Cosmic Blue finish, and Pro-Max Camera.</p>
+                <div class="price-group" style="margin-top:10px; margin-bottom:10px;">
+                    <span class="current-price">₹1,29,999</span>
+                    <span class="original-price">₹1,45,000</span>
+                </div>
+                <button class="product-buy-btn" data-name="iPhone 17 Cosmic" data-price="129999" onclick="addToCart(event)" style="background-color: #457b9d; color:white; margin-top:0; padding:10px;">ADD TO CART</button>
+            </div>
+
+            <div class="product-card">
+                <div class="sale-tag" style="position: absolute; top: 10px; right: 10px; background: #e63946; color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.8em; font-weight: 700;">HOT!</div>
+                <div class="img-container">
+                    <img class="product-image" src="https://images-cdn.ubuy.co.in/635780dbb861fa4e675af1a1-notime-led-light-up-hi-top-shoes-with.jpg" alt="LED Sneakers Pro">
+                </div>
+                <div class="product-title">LED Sneakers Pro</div>
+                <p class="product-description" style="color: #457b9d; font-size: 0.9em; font-weight: 500;">Stylish shoes with customizable LED lighting strips.</p>
+                <div class="price-group" style="margin-top:10px; margin-bottom:10px;">
+                    <span class="current-price">₹3,499</span>
+                    <span class="original-price">₹7,000</span>
+                </div>
+                <button class="product-buy-btn" data-name="LED Sneakers Pro" data-price="3499" onclick="addToCart(event)" style="background-color: #457b9d; color:white; margin-top:0; padding:10px;">ADD TO CART</button>
+            </div>
+            
+            <div class="product-card">
+                <div class="sale-tag" style="position: absolute; top: 10px; right: 10px; background: #457b9d; color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.8em; font-weight: 700;">BEST SELLER</div>
+                <div class="img-container">
+                    <img class="product-image" src="https://img.drz.lazcdn.com/static/pk/p/93d2aec6969e2bad3ddc729205ac32be.jpg_720x720q80.jpg" alt="Ultra Gaming Headset">
+                </div>
+                <div class="product-title">Ultra Gaming Headset</div>
+                <p class="product-description" style="color: #457b9d; font-size: 0.9em; font-weight: 500;">7.1 Surround Sound, Noise-Cancelling Mic, RGB.</p>
+                <div class="price-group" style="margin-top:10px; margin-bottom:10px;">
+                    <span class="current-price">₹5,999</span>
+                    <span class="original-price">₹8,500</span>
+                </div>
+                <button class="product-buy-btn" data-name="Ultra Gaming Headset" data-price="5999" onclick="addToCart(event)" style="background-color: #457b9d; color:white; margin-top:0; padding:10px;">ADD TO CART</button>
+            </div>
+
+            <div class="product-card">
+                <div class="sale-tag" style="position: absolute; top: 10px; right: 10px; background: #457b9d; color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.8em; font-weight: 700;">STOCK LEFT</div>
+                <div class="img-container">
+                    <img class="product-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8KsqKzBjVgI37dAjP_zKbawkVtRfYxiByhQ&s" alt="Aura Wireless Buds">
+                </div>
+                <div class="product-title">Aura Wireless Buds</div>
+                <p class="product-description" style="color: #457b9d; font-size: 0.9em; font-weight: 500;">Crystal clear sound with passive noise cancellation feature.</p>
+                <div class="price-group" style="margin-top:10px; margin-bottom:10px;">
+                    <span class="current-price">₹1,999</span>
+                    <span class="original-price">₹4,000</span>
+                </div>
+                <button class="product-buy-btn" data-name="Aura Wireless Buds" data-price="1999" onclick="addToCart(event)" style="background-color: #457b9d; color:white; margin-top:0; padding:10px;">ADD TO CART</button>
+            </div>
+            
+            <div class="product-card">
+                <div class="sale-tag" style="position: absolute; top: 10px; right: 10px; background: #1d3557; color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.8em; font-weight: 700;">NEW STOCK</div>
+                <div class="img-container">
+                    <img class="product-image" src="https://static3.webx.pk/files/68529/Images/373269578-max-68529-0-240324124745429.jpg" alt="Ergo Gaming Mouse">
+                </div>
+                <div class="product-title">Ergo Gaming Mouse</div>
+                <p class="product-description" style="color: #457b9d; font-size: 0.9em; font-weight: 500;">High precision sensor and customizable RGB lighting.</p>
+                <div class="price-group" style="margin-top:10px; margin-bottom:10px;">
+                    <span class="current-price">₹1,450</span>
+                    <span class="original-price">₹3,000</span>
+                </div>
+                <button class="product-buy-btn" data-name="Ergo Gaming Mouse" data-price="1450" onclick="addToCart(event)" style="background-color: #457b9d; color:white; margin-top:0; padding:10px;">ADD TO CART</button>
+            </div>
+            
         </div>
-      </div>
+        
+        <p id="designer-footer">Designed by Basit and Mohsin</p>
+        <button onclick="logout()">LOGOUT</button>
+    </div>
 
-      <div style="margin-top:14px">
-        <div class="meta">Markets (common OTC / FX / Crypto / Commodities)</div>
-        <div class="markets-list" id="marketsList" role="list">
-          <!-- items injected by JS -->
+    <div id="cart-page" class="interface-container hidden">
+        <div class="nav-bar">
+            <span class="nav-link" onclick="showInterface('product-listing')">🔙 Back to Home</span>
         </div>
-      </div>
+        <div id="store-name">🛒 YOUR CART</div>
+        <h3 style="color:#1d3557;">Selected Products</h3>
+        
+        <ul id="cart-list" style="background: #f1faee; border: 1px solid #a8dadc; color:#333;">
+            </ul>
+        
+        <p id="cart-total-display" style="font-size:1.5em; font-weight:900; color:#e63946;">Total: ₹0</p>
+        
+        <button class="checkout-btn" onclick="checkoutStart()">PROCEED TO CHECKOUT</button>
+        <button type="button" class="back-btn" onclick="showInterface('product-listing')">CONTINUE SHOPPING</button>
+        
+        <p id="designer-footer">Designed by Basit and Mohsin</p>
+        <button onclick="logout()">LOGOUT</button>
+    </div>
 
-      <div style="margin-top:14px;color:var(--muted);font-size:13px">
-        Notes:
-        <ul style="margin:8px 0 0 18px;color:var(--muted)">
-          <li>Chart widget is provided by TradingView (real-time chart widget).</li>
-          <li>If you want raw JSON ticks or many symbols, use Twelve Data / Finnhub APIs (they provide REST & WebSocket feeds).</li>
-        </ul>
-      </div>
-    </aside>
+    <div id="shipping-details-page" class="interface-container hidden">
+        <div id="store-name">SHIPMENT DETAILS 🚚</div>
+        <h3 style="color:#1d3557;">Enter your Delivery Information</h3>
+        <form id="shipping-form" onsubmit="event.preventDefault(); showInterface('payment-selection-page');">
+            <input type="text" id="full-name" placeholder="Full Name" required>
+            <input type="tel" id="phone" placeholder="Phone Number" required>
+            <input type="text" id="address" placeholder="Full Address (Street, City, Postal Code)" required>
+            <input type="text" id="city" placeholder="City / Town" required>
 
-    <!-- RIGHT: Chart -->
-    <section class="panel chart-area">
-      <div class="topbar">
-        <div>
-          <div class="price" id="livePrice">—</div>
-          <div class="meta" id="liveMeta">Symbol • Interval • Last update</div>
+            <p style="margin-top: 30px; font-weight: 900; color:#457b9d;">Order Total: <span id="shipping-total" style="color:#e63946;">₹0</span></p>
+
+            <button type="submit" class="checkout-btn">CONTINUE TO PAYMENT</button>
+            <button type="button" class="back-btn" onclick="showInterface('cart-page')">BACK TO CART</button>
+        </form>
+        <p id="designer-footer">Designed by Basit and Mohsin</p>
+        <button onclick="logout()">LOGOUT</button>
+    </div>
+
+    <div id="payment-selection-page" class="interface-container hidden">
+        <div id="store-name">SELECT PAYMENT METHOD 💳</div>
+        
+        <form id="payment-form">
+            <label class="payment-option">
+                <img class="payment-logo" src="https://static.vecteezy.com/system/resources/thumbnails/023/253/005/small/cash-on-delivery-solid-icons-simple-stock-illustration-stock-vector.jpg" alt="Cash On Delivery">
+                <span class="payment-text">Cash On Delivery (COD)</span>
+                <input type="radio" name="payment" value="COD" class="radio-btn" required>
+            </label>
+
+            <label class="payment-option">
+                <img class="payment-logo" src="https://images.seeklogo.com/logo-png/61/1/jazz-cash-new-logo-png_seeklogo-613046.png" alt="JazzCash">
+                <span class="payment-text">JazzCash / MobiCash</span>
+                <input type="radio" name="payment" value="JazzCash" class="radio-btn">
+            </label>
+
+            <label class="payment-option">
+                <img class="payment-logo" src="https://crystalpng.com/wp-content/uploads/2024/10/Easypaisa-logo.png" alt="EasyPaisa">
+                <span class="payment-text">EasyPaisa</span>
+                <input type="radio" name="payment" value="EasyPaisa" class="radio-btn">
+            </label>
+
+            <label class="payment-option">
+                <img class="payment-logo" src="https://platform.vox.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/13674554/Mastercard_logo.jpg?quality=90&strip=all&crop=0,0,100,100" alt="Mastercard">
+                <span class="payment-text">Debit / Credit Card (Mastercard)</span>
+                <input type="radio" name="payment" value="Debit Card" class="radio-btn">
+            </label>
+            
+             <label class="payment-option">
+                <img class="payment-logo" src="https://static.vecteezy.com/system/resources/thumbnails/013/948/616/small/bank-icon-logo-design-vector.jpg" alt="Other Banks">
+                <span class="payment-text">Other Bank Transfer</span>
+                <input type="radio" name="payment" value="Bank Transfer" class="radio-btn">
+            </label>
+
+            <p style="margin-top: 30px; font-weight: 900; color:#457b9d;">Order Total: <span id="payment-total" style="color:#e63946;">₹0</span></p>
+
+            <button type="button" class="checkout-btn" onclick="placeOrder()">PLACE ORDER NOW</button>
+            <button type="button" class="back-btn" onclick="showInterface('shipping-details-page')">BACK TO SHIPPING</button>
+        </form>
+
+        <p id="designer-footer">Designed by Basit and Mohsin</p>
+        <button onclick="logout()">LOGOUT</button>
+    </div>
+
+    <div id="order-summary-page" class="interface-container hidden">
+        <div id="store-name">ORDER CONFIRMED! 🎉</div>
+        <p id="order-confirmation" style="font-weight:700;">Thank you for shopping with us!</p>
+        
+        <div id="summary-details" style="text-align:left; padding: 20px; background: #f1faee; border-radius: 10px; border: 1px solid #a8dadc; color:#1d3557;">
+            <p><strong>Order Status:</strong> Processing</p>
+            <p><strong>Payment Method:</strong> <span id="summary-payment" style="color:#e63946;"></span></p>
+            <p><strong>Shipping To:</strong> <span id="summary-address"></span></p>
+            <p><strong>Total Amount Paid:</strong> <strong style="font-size: 1.2em;"><span id="summary-total" style="color:#e63946;"></span></strong></p>
         </div>
-        <div style="margin-left:auto;color:var(--muted);font-size:13px">Powered by TradingView</div>
-      </div>
 
-      <div id="chart-container"></div>
-    </section>
-  </div>
+        <button onclick="showInterface('product-listing')">CONTINUE SHOPPING</button>
+        <p id="designer-footer">Designed by Basit and Mohsin</p>
+        <button onclick="logout()">LOGOUT</button>
+    </div>
 
-  <!-- TradingView widget script (official) -->
-  <script src="https://s3.tradingview.com/tv.js" defer></script>
 
-  <script>
-    // --- SYMBOL LIST (common OTC / Forex / Crypto / Commodities)
-    // Each item: { id: 'label for TradingView', title: 'display name' }
-    // NOTE: TradingView symbol prefixes: FX: for forex, BINANCE: for Binance spot, OANDA: for some FX/commodities, TV: for generic.
-    const SYMBOLS = [
-      { id: 'FX:EURUSD', title: 'EUR/USD' },
-      { id: 'FX:GBPUSD', title: 'GBP/USD' },
-      { id: 'FX:USDJPY', title: 'USD/JPY' },
-      { id: 'FX:AUDUSD', title: 'AUD/USD' },
-      { id: 'FX:USDCAD', title: 'USD/CAD' },
-      { id: 'FX:USDCHF', title: 'USD/CHF' },
-      { id: 'OANDA:XAUUSD', title: 'Gold (XAU/USD)' },
-      { id: 'OANDA:XAGUSD', title: 'Silver (XAG/USD)' },
-      { id: 'NYMEX:CL1!', title: 'Crude Oil (WTI)' },
-      { id: 'BINANCE:BTCUSDT', title: 'Bitcoin (BTC/USDT)' },
-      { id: 'BINANCE:ETHUSDT', title: 'Ethereum (ETH/USDT)' },
-      { id: 'TV:COPPER', title: 'Copper (generic)' }
-    ];
+    <script>
+        let cartItems = [];
+        let orderDetails = {};
 
-    // Populate left-side market list
-    const marketsList = document.getElementById('marketsList');
-    SYMBOLS.forEach((s, i) => {
-      const el = document.createElement('button');
-      el.className = 'market-item';
-      el.type = 'button';
-      el.dataset.symbol = s.id;
-      el.innerHTML = `<div class="left"><div class="market-symbol">${s.title}</div><div class="market-sub">${s.id}</div></div><div class="right meta">Open</div>`;
-      el.addEventListener('click', ()=> selectSymbol(s));
-      marketsList.appendChild(el);
-    });
+        function showInterface(targetId) {
+            const interfaces = ['login-interface', 'product-listing', 'cart-page', 'shipping-details-page', 'payment-selection-page', 'order-summary-page'];
+            interfaces.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.classList.add('hidden');
+                }
+            });
 
-    // TradingView widget handle
-    let tvWidget = null;
-    let currentSymbol = SYMBOLS[0];
-    let currentInterval = 'D';
-
-    // helper to create widget
-    function createWidget(symbol = 'FX:EURUSD', interval = 'D'){
-      const container = document.getElementById('chart-container');
-      container.innerHTML = ''; // clear
-      // If TradingView global is not ready, wait and retry
-      if(!window.TradingView){
-        container.innerHTML = '<div style="padding:30px;color:var(--muted)">Loading chart engine...</div>';
-        setTimeout(()=> createWidget(symbol, interval), 250);
-        return;
-      }
-      tvWidget = new TradingView.widget({
-        autosize: true,
-        symbol: symbol,
-        interval: interval,
-        timezone: "Etc/UTC",
-        theme: "Dark",
-        style: "1",
-        toolbar_bg: "#f1f3f6",
-        hidevolume: false,
-        allow_symbol_change: true,
-        details: true,
-        studies: ["RSI@tv-basicstudies"],
-        container_id: "chart-container",
-        // small responsive tweaks
-        withdateranges: true,
-        hide_top_toolbar: false,
-        enable_publishing: false,
-        save_image: false,
-        locale: "en"
-      });
-
-      // Update live price display periodically via TradingView's onReady
-      tvWidget.onChartReady && tvWidget.onChartReady(()=>{
-        // try to get last price / updates from widget's API (some widget builds provide datafeed events)
-        // Fallback: poll last visible candle using widget's API (if available)
-        try {
-          const chart = tvWidget.activeChart();
-          const updatePrice = async ()=>{
-            try{
-              const symbolInfo = chart && chart.symbol();
-              // The widget API's availability may vary — we'll update basic label
-              document.getElementById('livePrice').textContent = 'Loading…';
-              document.getElementById('liveMeta').textContent = `${symbolInfo ? symbolInfo.name || symbol : symbol} • ${interval} • live`;
-            }catch(e){
-              // ignore
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+                targetElement.classList.remove('hidden');
             }
-          };
-          updatePrice();
-          // attempt regular label refresh
-          setInterval(updatePrice, 3000);
-        } catch(e){
-          // ignore
+            
+            if (targetId === 'cart-page') updateCartPage();
+            if (targetId === 'product-listing') updateCartStatus();
+            if (targetId === 'shipping-details-page') updateTotalDisplay();
+            if (targetId === 'payment-selection-page') updateTotalDisplay();
+            if (targetId === 'order-summary-page') updateOrderSummary();
         }
-      });
-    }
 
-    // select symbol function
-    function selectSymbol(s){
-      currentSymbol = s;
-      // mark active in list
-      document.querySelectorAll('.market-item').forEach(btn=>{
-        btn.style.boxShadow = btn.dataset.symbol === s.id ? '0 6px 18px rgba(124,58,237,0.12)' : 'none';
-      });
-      // recreate widget with new symbol & currentInterval
-      createWidget(s.id, currentInterval);
-      // update header price label (will be updated by widget on ready)
-      document.getElementById('liveMeta').textContent = `${s.title} • ${currentInterval} • connecting…`;
-      document.getElementById('livePrice').textContent = '—';
-    }
+        function calculateTotal() {
+            return cartItems.reduce((total, item) => total + item.price, 0);
+        }
 
-    // timeframe buttons
-    document.querySelectorAll('.tf-btn').forEach(b=>{
-      b.addEventListener('click', ()=>{
-        document.querySelectorAll('.tf-btn').forEach(x=>x.classList.remove('active'));
-        b.classList.add('active');
-        currentInterval = b.dataset.interval;
-        // recreate widget with new timeframe (TradingView widget doesn't support interval switching on the fly reliably across builds)
-        createWidget(currentSymbol.id, currentInterval);
-        document.getElementById('liveMeta').textContent = `${currentSymbol.title} • ${currentInterval} • updating…`;
-      });
-    });
+        function updateTotalDisplay() {
+            const total = calculateTotal().toLocaleString();
+            document.getElementById('shipping-total').textContent = `₹${total}`;
+            document.getElementById('payment-total').textContent = `₹${total}`;
+        }
 
-    // init: select first symbol and create widget (after tv.js loads)
-    window.addEventListener('load', ()=> {
-      selectSymbol(SYMBOLS[0]);
-    });
+        function updateCartStatus() {
+            const count = cartItems.length;
+            document.getElementById('cart-status').innerHTML = `🛒 Cart: ${count} Items`;
+            const navCartLink = document.getElementById('nav-cart-link');
+            if (navCartLink) {
+                navCartLink.innerHTML = `🛒 Cart (${count})`;
+            }
+        }
 
-    // ---- OPTIONAL: If you want raw real-time prices (JSON) instead of only chart widget:
-    // You can plug-in a REST or WebSocket feed from providers like Twelve Data or Finnhub.
-    // Example providers:
-    //  - Twelve Data (REST + WebSocket): https://twelvedata.com/ (supports forex, crypto, stocks). :contentReference[oaicite:2]{index=2}
-    //  - Finnhub (REST + WebSocket): https://finnhub.io/ (stocks, forex, crypto). :contentReference[oaicite:3]{index=3}
-    //
-    // Those services typically require an API key (free tiers available) and then you can:
-    //  - open a WebSocket to subscribe to multiple symbols and update the price badge in real-time
-    //  - or poll a /price endpoint periodically for each symbol
-    //
-    // If you want, I can add example code that:
-    //  1) asks you for your Twelve Data or Finnhub API key, and
-    //  2) opens a WebSocket (or polls REST) to update the "livePrice" and small feed for many OTC symbols.
-    //
-    // See provider docs for setup and limits. :contentReference[oaicite:4]{index=4}
+        function addToCart(event) {
+            const button = event.target;
+            const productName = button.getAttribute('data-name');
+            const productPrice = parseInt(button.getAttribute('data-price'));
 
-  </script>
+            cartItems.push({ name: productName, price: productPrice });
+            updateCartStatus();
+
+            const originalColor = button.style.backgroundColor;
+            button.innerHTML = `Added! (${cartItems.length})`;
+            button.style.backgroundColor = '#62c462';
+            
+            setTimeout(() => {
+                button.innerHTML = 'ADD TO CART';
+                button.style.backgroundColor = originalColor;
+            }, 1000);
+        }
+
+        function removeItem(index) {
+            cartItems.splice(index, 1);
+            updateCartPage();
+            updateCartStatus();
+        }
+
+        function updateCartPage() {
+            const list = document.getElementById('cart-list');
+            const totalDisplay = document.getElementById('cart-total-display');
+            let total = 0;
+            list.innerHTML = '';
+
+            if (cartItems.length === 0) {
+                list.innerHTML = '<li style="padding: 20px; color: #457b9d; font-weight:700;">Your Cart is Empty!</li>';
+                document.querySelector('#cart-page .checkout-btn').disabled = true;
+            } else {
+                document.querySelector('#cart-page .checkout-btn').disabled = false;
+                cartItems.forEach((item, index) => {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'cart-item';
+                    listItem.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #a8dadc;';
+                    listItem.innerHTML = `
+                        <span style="color:#1d3557; font-weight:700;">${item.name} (x1)</span>
+                        <span style="color:#e63946; font-weight:900;">₹${item.price.toLocaleString()}</span>
+                        <button class="remove-btn" onclick="removeItem(${index})" style="background:#e63946; color:white; width:auto; padding: 5px 10px; margin:0;">REMOVE</button>
+                    `;
+                    list.appendChild(listItem);
+                    total += item.price;
+                });
+            }
+
+            totalDisplay.innerHTML = `Total: ₹${total.toLocaleString()}`;
+        }
+        
+        function checkoutStart() {
+            if (cartItems.length === 0) {
+                alert("Please add products to your cart before checking out.");
+                return;
+            }
+            showInterface('shipping-details-page');
+        }
+
+        function placeOrder() {
+            const paymentMethod = document.querySelector('input[name="payment"]:checked');
+            const shippingForm = document.getElementById('shipping-form');
+
+            if (!shippingForm.checkValidity()) {
+                alert("Please fill in all shipping details first.");
+                showInterface('shipping-details-page');
+                return;
+            }
+
+            if (!paymentMethod) {
+                alert("Please select a payment method.");
+                return;
+            }
+
+            orderDetails.name = document.getElementById('full-name').value;
+            orderDetails.address = document.getElementById('address').value;
+            orderDetails.city = document.getElementById('city').value;
+            orderDetails.phone = document.getElementById('phone').value;
+            
+            orderDetails.payment = paymentMethod.value;
+            orderDetails.total = calculateTotal();
+            
+            cartItems = [];
+
+            showInterface('order-summary-page');
+        }
+
+        function updateOrderSummary() {
+            document.getElementById('summary-payment').textContent = orderDetails.payment;
+            document.getElementById('summary-address').textContent = `${orderDetails.address}, ${orderDetails.city}`;
+            document.getElementById('summary-total').textContent = `₹${orderDetails.total.toLocaleString()}`;
+        }
+
+
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const emailInput = document.getElementById('email').value;
+            const passwordInput = document.getElementById('password').value;
+            const statusMessage = document.getElementById('login-status');
+            const CORRECT_EMAIL = "basit@gmail.com";
+            const CORRECT_PASS = "1";
+
+            if (emailInput === CORRECT_EMAIL && passwordInput === CORRECT_PASS) {
+                statusMessage.innerHTML = 'Login Successful! 🎉';
+                statusMessage.style.color = '#62c462';
+
+                setTimeout(() => { showInterface('product-listing'); }, 500); 
+                
+            } else {
+                statusMessage.innerHTML = 'Invalid Email or Password!';
+                statusMessage.style.color = '#e63946';
+            }
+        });
+
+        function logout() {
+            window.location.reload(); 
+        }
+
+        function centerContent() {
+            document.body.style.display = 'flex';
+        }
+        window.onload = centerContent;
+        window.onresize = centerContent;
+    </script>
 </body>
 </html>
