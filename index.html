@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DELUX STORE</title>
+    <title>DELUX STORE - FINAL & COMPLETE</title>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap');
@@ -93,6 +93,20 @@
             object-fit: contain;
         }
         
+        /* --- Confirmation Tick Icon Style (NEW) --- */
+        .confirmation-icon {
+            width: 80px;
+            height: 80px;
+            margin: 20px auto;
+            display: block;
+            /* Optional animation for confirmation */
+            animation: bounce 0.8s ease-out;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
         /* --- Login Box Width Fix (Retained for clean look) --- */
         #login-interface { max-width: 450px; padding: 40px; }
         #login-interface input { width: 90%; padding: 15px; margin: 10px 0; background: #fff; border: 1px solid #a8dadc; border-radius: 10px; }
@@ -370,8 +384,11 @@
     </div>
 
     <div id="order-summary-page" class="interface-container hidden">
-        <div id="store-name">ORDER CONFIRMED! 🎉</div>
-        <p id="order-confirmation" style="font-weight:700;">Thank you for shopping with us!</p>
+        <div id="store-name">ORDER CONFIRMED!</div>
+        
+        <img src="https://png.pngtree.com/png-clipart/20240921/original/pngtree-green-check-mark-icon-transparent-vector-png-image_16059344.png" alt="Order Confirmed Tick" class="confirmation-icon">
+
+        <p id="order-confirmation" style="font-weight:700; font-size: 1.2em; color:#457b9d;">Thank you for shopping with us! Your order is being processed.</p>
         
         <div id="summary-details" style="text-align:left; padding: 20px; background: #f1faee; border-radius: 10px; border: 1px solid #a8dadc; color:#1d3557;">
             <p><strong>Order Status:</strong> Processing</p>
