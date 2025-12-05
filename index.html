@@ -8,7 +8,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap');
 
-        /* --- THEME ADJUSTMENT: Mid-Light Color Changing Background --- */
+        /* --- THEME ADJUSTMENT: NEW STYLISH BOLD ANIMATION --- */
         body {
             margin: 0;
             padding: 0;
@@ -17,10 +17,12 @@
             align-items: center;
             min-height: 100vh;
             font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(-45deg, #74a8ac, #80b490, #ffd3b5, #c2a7c4);
+            
+            /* NEW BACKGROUND: DARKER, STYLISH GRADIENT */
+            background: linear-gradient(-45deg, #1d3557, #457b9d, #e63946, #a8dadc);
             background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            color: #1d3557; 
+            animation: gradientBG 20s ease infinite; /* Slower and more prominent */
+            color: #f1faee; 
         }
         @keyframes gradientBG {
             0% { background-position: 0% 50%; }
@@ -30,10 +32,10 @@
         
         /* --- General Container Styling --- */
         .interface-container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(5px);
+            background: rgba(255, 255, 255, 0.98); /* Slightly less transparency */
+            backdrop-filter: blur(8px); /* Increased blur for style */
             border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.25); /* Stronger shadow */
             padding: 40px;
             width: 90%;
             max-width: 1200px;
@@ -41,19 +43,59 @@
             position: relative;
         }
         .hidden { display: none !important; }
+        
+        /* --- Login Interface Title (Updated Style) --- */
+        .login-title-text {
+            color: #e63946; 
+            font-size: 2.5em; 
+            font-weight: 900;
+            margin-bottom: 25px;
+            letter-spacing: 5px; /* Added spacing */
+            text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
+            animation: fadeInDown 1s ease-out;
+        }
+        
+        /* --- Store Name (Stylish, Bold, Spaced) --- */
         #store-name {
-            font-size: 2.5em;
+            font-size: 2.8em; /* Larger */
             font-weight: 900;
             color: #1d3557;
             margin-bottom: 25px;
             border-bottom: 3px solid #e63946; 
             padding-bottom: 10px;
-            letter-spacing: 5px; 
+            letter-spacing: 8px; /* More spacing */
+            text-transform: uppercase;
         }
 
+        /* --- Nav Bar Styling (NEW/MODIFIED) --- */
+        .nav-bar {
+            display: flex; 
+            justify-content: flex-end; 
+            gap: 25px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #a8dadc; 
+        }
+        .nav-link {
+            cursor: pointer;
+            font-weight: 700;
+            color: #457b9d;
+            transition: color 0.2s;
+        }
+        .nav-link:hover {
+            color: #e63946;
+        }
+        .nav-icon { /* CSS for all new icons */
+            width: 20px; 
+            height: 20px;
+            margin-right: 5px;
+            vertical-align: middle;
+            object-fit: contain;
+        }
+        
         /* --- Login Box Width Fix (Retained for clean look) --- */
-        #login-interface { max-width: 400px; padding: 30px; }
-        #login-interface input { width: 100%; padding: 12px; margin: 8px 0; background: #fff; border: 1px solid #a8dadc; }
+        #login-interface { max-width: 450px; padding: 40px; }
+        #login-interface input { width: 90%; padding: 15px; margin: 10px 0; background: #fff; border: 1px solid #a8dadc; border-radius: 10px; }
         input[type="email"], input[type="password"], 
         #shipping-details-page input[type="text"], #shipping-details-page input[type="tel"] {
             width: 90%; padding: 15px; margin: 10px 0; border: 1px solid #a8dadc; border-radius: 10px; background: #f1faee; font-size: 1em; font-weight: 500; color: #333; outline: none; box-sizing: border-box;
@@ -107,7 +149,7 @@
 <body>
 
     <div id="login-interface" class="interface-container">
-        <h2 style="color: #e63946; font-size: 1.8em; margin-bottom: 25px;">DELUX  STORE  LOGIN</h2>
+        <h2 class="login-title-text">DELUX STORE LOGIN</h2>
         <form id="login-form">
             <input type="email" id="email" placeholder="Enter your Email Address" required>
             <input type="password" id="password" placeholder="Enter your Password" required>
@@ -117,11 +159,20 @@
     </div>
     
     <div id="product-listing" class="interface-container hidden">
+        
         <div class="nav-bar">
-            <span class="nav-link" onclick="showInterface('product-listing')">🏠 Home</span>
-            <span class="nav-link" onclick="showInterface('product-listing')">📦 Products</span>
-            <span class="nav-link" onclick="alert('This is the About Us page.')">ℹ️ About Us</span>
-            <span class="nav-link" id="nav-cart-link" onclick="showInterface('cart-page')">🛒 Cart (0)</span>
+            <span class="nav-link" onclick="showInterface('product-listing')">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBFU1JKaxwgSbn7KpLeaky1E8Mm7qhyLMdrg&s" alt="Home" class="nav-icon"> Home
+            </span>
+            <span class="nav-link" onclick="showInterface('product-listing')">
+                <img src="https://icon-library.com/images/product-icon/product-icon-8.jpg" alt="Products" class="nav-icon"> Products
+            </span>
+            <span class="nav-link" onclick="alert('This is the About Us page.')">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1jlu196zCKp7Lqvrz24ZvkV5v7DPl7uy3bMQHc_BLP6pcP_cvEqDLxTEJGBXy71tjp5s&usqp=CAU" alt="About Us" class="nav-icon"> About Us
+            </span>
+            <span class="nav-link" id="nav-cart-link" onclick="showInterface('cart-page')">
+                <img src="https://cdn-icons-png.flaticon.com/512/3081/3081986.png" alt="Cart" class="nav-icon"> Cart (0)
+            </span>
         </div>
         
         <div id="store-name">D E L U X S T O R E</div>
@@ -237,7 +288,9 @@
 
     <div id="cart-page" class="interface-container hidden">
         <div class="nav-bar">
-            <span class="nav-link" onclick="showInterface('product-listing')">🔙 Back to Home</span>
+            <span class="nav-link" onclick="showInterface('product-listing')">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBFU1JKaxwgSbn7KpLeaky1E8Mm7qhyLMdrg&s" alt="Home" class="nav-icon"> Back to Home
+            </span>
         </div>
         <div id="store-name">🛒 YOUR CART</div>
         <h3 style="color:#1d3557;">Selected Products</h3>
@@ -317,7 +370,7 @@
     </div>
 
     <div id="order-summary-page" class="interface-container hidden">
-        <div id="store-name">ORDER CONFIRMED ! 🎉</div>
+        <div id="store-name">ORDER CONFIRMED! 🎉</div>
         <p id="order-confirmation" style="font-weight:700;">Thank you for shopping with us!</p>
         
         <div id="summary-details" style="text-align:left; padding: 20px; background: #f1faee; border-radius: 10px; border: 1px solid #a8dadc; color:#1d3557;">
@@ -336,6 +389,9 @@
     <script>
         let cartItems = [];
         let orderDetails = {};
+        
+        // Storing the Cart icon link globally for dynamic update
+        const CART_ICON_LINK = "https://cdn-icons-png.flaticon.com/512/3081/3081986.png"; 
 
         function showInterface(targetId) {
             const interfaces = ['login-interface', 'product-listing', 'cart-page', 'shipping-details-page', 'payment-selection-page', 'order-summary-page'];
@@ -367,13 +423,20 @@
             document.getElementById('shipping-total').textContent = `₹${total}`;
             document.getElementById('payment-total').textContent = `₹${total}`;
         }
-
+        
+        // MODIFIED JS FUNCTION to retain the image tag and update the count
         function updateCartStatus() {
             const count = cartItems.length;
             document.getElementById('cart-status').innerHTML = `🛒 Cart: ${count} Items`;
+            
             const navCartLink = document.getElementById('nav-cart-link');
             if (navCartLink) {
-                navCartLink.innerHTML = `🛒 Cart (${count})`;
+                // Find the existing img tag's HTML
+                const imgElement = navCartLink.querySelector('img');
+                const imgHtml = imgElement ? imgElement.outerHTML : `<img src="${CART_ICON_LINK}" alt="Cart" class="nav-icon">`;
+
+                // Re-write innerHTML with the retained image and updated count text
+                navCartLink.innerHTML = `${imgHtml} Cart (${count})`;
             }
         }
 
